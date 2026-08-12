@@ -1,0 +1,73 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Recipe Finder</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="home-content">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Recipe Finder</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-searchbar
+    [(ngModel)]="searchTerm"
+    (ionInput)="onSearchInput()"
+    placeholder="Search recipes, e.g. pasta"
+    debounce="0"
+  ></ion-searchbar>
+
+  <div class="category-scroller">
+    @for (category of categories; track category.idCategory) {
+      <ion-chip
+        [outline]="selectedCategory !== category.strCategory"
+        [color]="selectedCategory === category.strCategory ? 'primary' : 'medium'"
+        (click)="selectCategory(category.strCategory)"
+      >
+        <ion-label>{{ category.strCategory }}</ion-label>
+      </ion-chip>
+    }
+  </div>
+
+  <div class="surprise-row">
+    <ion-button expand="block" fill="outline" (click)="surpriseMe()">
+      <ion-icon slot="start" name="dice-outline"></ion-icon>
+      Surprise Me
+    </ion-button>
+  </div>
+
+  @if (loading) {
+    <div class="loading-wrap">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Loading recipes…</p>
+    </div>
+  } @else if (meals.length === 0) {
+    <div class="empty-wrap">
+      <ion-icon name="search-outline"></ion-icon>
+      <p>No recipes found. Try a different search.</p>
+    </div>
+  } @else {
+    <ion-grid>
+      <ion-row>
+        @for (meal of meals; track meal.idMeal) {
+          <ion-col size="6" size-md="4" size-lg="3">
+            <ion-card button (click)="openRecipe(meal.idMeal)">
+              <ion-img [src]="meal.strMealThumb" [alt]="meal.strMeal"></ion-img>
+              <ion-card-header>
+                <ion-card-title>
+                  {{ meal.strMeal }}
+                  <ion-icon
+                    class="fav-icon"
+                    [name]="favorites.isFavorite(meal.idMeal) ? 'heart' : 'heart-outline'"
+                    (click)="toggleFavorite(meal, $event)"
+                  ></ion-icon>
+                </ion-card-title>
+              </ion-card-header>
+            </ion-card>
+          </ion-col>
+        }
+      </ion-row>
+    </ion-grid>
+  }
+</ion-content>

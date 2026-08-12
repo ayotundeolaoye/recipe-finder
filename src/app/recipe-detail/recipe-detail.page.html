@@ -1,0 +1,81 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ meal?.strMeal ?? 'Recipe' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="detail-content">
+  @if (loading) {
+    <div class="loading-wrap">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+  } @else if (meal) {
+    <ion-img [src]="meal.strMealThumb" [alt]="meal.strMeal"></ion-img>
+
+    <div class="detail-header">
+      <h1>{{ meal.strMeal }}</h1>
+      <ion-icon
+        class="fav-icon"
+        [name]="favorites.isFavorite(meal.idMeal) ? 'heart' : 'heart-outline'"
+        (click)="toggleFavorite()"
+      ></ion-icon>
+    </div>
+
+    <div class="chip-row">
+      <ion-chip color="primary" [outline]="true">
+        <ion-icon name="restaurant-outline"></ion-icon>
+        <ion-label>{{ meal.strCategory }}</ion-label>
+      </ion-chip>
+      <ion-chip color="tertiary" [outline]="true">
+        <ion-label>{{ meal.strArea }} cuisine</ion-label>
+      </ion-chip>
+      @if (meal.strYoutube) {
+        <ion-chip color="danger" [outline]="true">
+          <a [href]="meal.strYoutube" target="_blank" rel="noopener">
+            <ion-icon name="logo-youtube"></ion-icon>
+            <ion-label>Watch video</ion-label>
+          </a>
+        </ion-chip>
+      }
+    </div>
+
+    <h2 class="section-title">Ingredients</h2>
+    <ion-list>
+      @for (item of ingredients; track item.name) {
+        <ion-item>
+          <ion-label>{{ item.name }}</ion-label>
+          <ion-label slot="end" class="measure">{{ item.measure }}</ion-label>
+        </ion-item>
+      }
+    </ion-list>
+
+    <h2 class="section-title">Instructions</h2>
+    <p class="instructions">{{ meal.strInstructions }}</p>
+
+    <h2 class="section-title">Log this as cooked</h2>
+    <div class="log-form">
+      <ion-item lines="none">
+        <ion-icon slot="start" name="location-outline"></ion-icon>
+        <ion-label>Tag my current location</ion-label>
+        <ion-toggle slot="end" [(ngModel)]="tagLocation"></ion-toggle>
+      </ion-item>
+      <ion-textarea
+        [(ngModel)]="cookNote"
+        placeholder="Any notes for next time? (optional)"
+        autoGrow="true"
+        fill="outline"
+        class="note-field"
+      ></ion-textarea>
+      <ion-button expand="block" [disabled]="saving" (click)="logCooked()">
+        {{ saving ? 'Saving…' : 'I Cooked This' }}
+      </ion-button>
+    </div>
+  } @else {
+    <div class="loading-wrap">
+      <p>Recipe not found.</p>
+    </div>
+  }
+</ion-content>
