@@ -1,0 +1,8 @@
+node_modules/
+www/
+dist/
+.angular/
+android/
+ios/
+.DS_Store
+*.log
